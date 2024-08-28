@@ -1,19 +1,17 @@
+from datetime import datetime
 import io
 import os
-import tempfile
-from datetime import datetime
-
+ 
 import cairosvg
+from PIL import Image
 import pytest
-import pyzbar.pyzbar as pyzbar
-import qrcode
+from pyzbar import pyzbar
+from pyzbar.pyzbar import ZBarSymbol
+ 
 from engrave import get_qr_code, register
+from pelican import Pelican
 from pelican.contents import Article, Category
 from pelican.settings import DEFAULT_CONFIG
-from PIL import Image
-from pyzbar.pyzbar import ZBarSymbol
-
-from pelican import Pelican
 
 
 class MockCategory(Category):
@@ -78,7 +76,7 @@ def pelican_instance(pelican_settings, tmp_path):
 
 def decode_qr_code_from_svg(svg_path):
     try:
-        with open(svg_path, "r") as svg_file:
+        with open(svg_path) as svg_file:
             svg_content = svg_file.read()
 
         png_output = cairosvg.svg2png(bytestring=svg_content, background_color="white")
@@ -87,11 +85,7 @@ def decode_qr_code_from_svg(svg_path):
         decoded_objects = pyzbar.decode(image, symbols=[ZBarSymbol.QRCODE])
         if decoded_objects:
             return decoded_objects[0].data.decode("utf-8")
-        else:
-            print("No QR code detected in the image.")
-            return None
     except Exception as e:
-        print(f"Error decoding QR code from SVG: {str(e)}")
         return None
 
 
@@ -126,7 +120,7 @@ def test_get_qr_code(article):
 
 
 def test_qr_code_cleanup(pelican_instance, article):
-    """tests qr cleanup prior to run"""
+    """Tests qr cleanup prior to run"""
     register()
     pelican_instance.run()
 
