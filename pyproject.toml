@@ -1,11 +1,11 @@
 [project]
 name = "pelican-engrave"
 version = "0.0.1"
-description = " A plugin for generating and embedding QR codes in your blogpost "
-authors = [[{"name = "Lukas Muenter", email = "lukas.muenter@protonmail.com"}]]
+description = "A plugin for generating and embedding QR codes in your blogpost"
+authors = [{"name" = "Lukas Muenter", "email" = "lukas.muenter@protonmail.com"}]
 license = {text = "MIT"}
 readme = "README.md"
-keywords = [["pelican", "plugin", "qrcode", "qr", "blog", "url"]]
+keywords = ["pelican", "plugin", "qrcode", "qr", "blog", "url"]
 classifiers = [
     "Development Status :: 1 - Planning",
     "Environment :: Console",
@@ -26,6 +26,7 @@ classifiers = [
 requires-python = ">=3.8.1,<4.0"
 dependencies = [
     "pelican>=4.5",
+    "qrcode[pil]>=7.0",
 ]
 
 [project.urls]
@@ -48,6 +49,8 @@ test = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
     "pytest-sugar>=1.0",
+    "CairoSVG==2.7.1",
+    "pyzbar==0.1.9"
 ]
 
 [tool.pdm.build]
