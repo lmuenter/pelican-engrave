@@ -1,13 +1,13 @@
 from datetime import datetime
 import io
 import os
- 
+
 import cairosvg
 from PIL import Image
 import pytest
 from pyzbar import pyzbar
 from pyzbar.pyzbar import ZBarSymbol
- 
+
 from engrave import get_qr_code, register
 from pelican import Pelican
 from pelican.contents import Article, Category
