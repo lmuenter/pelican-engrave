@@ -41,7 +41,7 @@ def article(pelican_settings):
     )
 
 
-def test_generate_qr_code(article):
+def test_get_qr_code(article):
 
     # add qrcode
     get_qr_code(article)
@@ -50,10 +50,14 @@ def test_generate_qr_code(article):
     relative_path = os.path.join("images", "engrave", f"{article.slug}_qrcode.svg")
     expected_url = f"http://example.com/{relative_path}"
 
-    # chech presence of html widget
-    assert f'<img src="{expected_url}" alt="QR Code" type="image/svg+xml">' in article.content
+    # chech presence of url in article context
+    assert hasattr(article, "engrave_qrcode"), "Article should have engrave_qrcode attribute."
+    assert article.engrave_qrcode == expected_url, f"Expected URL to be {expected_url}, but got {article.engrave_qrcode}"
 
     # check presence/structure of qrcode
     svg_path = os.path.join(article.settings["OUTPUT_PATH"], relative_path)
     assert os.path.exists(svg_path)
     assert os.path.getsize(svg_path) > 0
+    with open(svg_path, 'r') as file:
+        svg_content = file.read()
+        assert '<svg' in svg_content and '</svg>' in svg_content, "QR code SVG file does not contain valid SVG content."

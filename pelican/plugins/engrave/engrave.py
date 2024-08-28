@@ -48,7 +48,11 @@ def get_qr_code(content):
     qr_image_path = construct_output_path(content.settings, content.slug)
     save_qr_image(img, qr_image_path)
 
-    append_qr_code_to_content(content, qr_image_path)
+    relative_image_path = os.path.relpath(qr_image_path, content.settings["OUTPUT_PATH"])
+    site_url = content.settings.get('SITEURL', '').rstrip('/')
+    qrcode_url = f'{site_url}/{relative_image_path}'
+
+    content.engrave_qrcode = qrcode_url
 
 
 def register():
