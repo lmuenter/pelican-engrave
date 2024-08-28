@@ -6,6 +6,12 @@ from datetime import datetime
 from engrave import get_qr_code, register
 import os
 import tempfile
+from PIL import Image
+import qrcode
+import io
+import pyzbar.pyzbar as pyzbar
+from pyzbar.pyzbar import ZBarSymbol
+import cairosvg
 
 
 class MockCategory(Category):
@@ -64,24 +70,49 @@ def pelican_instance(pelican_settings, tmp_path):
     return Pelican(settings=pelican_settings)
 
 
+def decode_qr_code_from_svg(svg_path):
+    try:
+        with open(svg_path, 'r') as svg_file:
+            svg_content = svg_file.read()
+        
+        png_output = cairosvg.svg2png(bytestring=svg_content, background_color="white")
+        image = Image.open(io.BytesIO(png_output))
+        
+        decoded_objects = pyzbar.decode(image, symbols=[ZBarSymbol.QRCODE])
+        if decoded_objects:
+            return decoded_objects[0].data.decode('utf-8')
+        else:
+            print("No QR code detected in the image.")
+            return None
+    except Exception as e:
+        print(f"Error decoding QR code from SVG: {str(e)}")
+        return None
+    
+
 def test_get_qr_code(article):
     get_qr_code(article)
 
-    # get expected url
+    site_url = "http://example.com"
+    full_article_url = f"{site_url}/{article.slug}.html"
+
+    # get expected url for QR code file path
     relative_path = os.path.join("images", "engrave", f"{article.slug}_qrcode.svg")
     expected_url = f"http://example.com/{relative_path}"
 
-    # chech presence of url in article context
+    # check presence of URL in article context
     assert hasattr(article, "engrave_qrcode"), "Article should have engrave_qrcode attribute."
     assert article.engrave_qrcode == expected_url, f"Expected URL to be {expected_url}, but got {article.engrave_qrcode}"
 
-    # check presence/structure of qrcode
+    # check presence/structure of QR code
     svg_path = os.path.join(article.settings["OUTPUT_PATH"], relative_path)
     assert os.path.exists(svg_path)
     assert os.path.getsize(svg_path) > 0
-    with open(svg_path, 'r') as file:
-        svg_content = file.read()
-        assert '<svg' in svg_content and '</svg>' in svg_content, "QR code SVG file does not contain valid SVG content."
+
+    # decode the QR code and check its content
+    decoded_content = decode_qr_code_from_svg(svg_path)
+    assert decoded_content == full_article_url, (
+        f"QR code should encode the full article URL. Expected {full_article_url}, got {decoded_content}"
+    )
 
 
 def test_qr_code_cleanup(pelican_instance, article):
