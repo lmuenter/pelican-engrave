@@ -1,9 +1,10 @@
 import os
-import qrcode
-from qrcode.image.svg import SvgImage
-from pelican import signals
 import shutil
 
+import qrcode
+from qrcode.image.svg import SvgImage
+
+from pelican import signals
 
 IMAGE_DIR = "images"
 BASE_DIR = "engrave"

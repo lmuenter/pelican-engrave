@@ -1,17 +1,19 @@
-import pytest
-from pelican import Pelican
-from pelican.contents import Article, Category
-from pelican.settings import DEFAULT_CONFIG
-from datetime import datetime
-from engrave import get_qr_code, register
+import io
 import os
 import tempfile
-from PIL import Image
-import qrcode
-import io
-import pyzbar.pyzbar as pyzbar
-from pyzbar.pyzbar import ZBarSymbol
+from datetime import datetime
+
 import cairosvg
+import pytest
+import pyzbar.pyzbar as pyzbar
+import qrcode
+from engrave import get_qr_code, register
+from pelican.contents import Article, Category
+from pelican.settings import DEFAULT_CONFIG
+from PIL import Image
+from pyzbar.pyzbar import ZBarSymbol
+
+from pelican import Pelican
 
 
 class MockCategory(Category):
