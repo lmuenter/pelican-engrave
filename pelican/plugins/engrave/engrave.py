@@ -55,13 +55,15 @@ def append_qr_code_to_content(content, image_path):
 def get_qr_code(content):
     if content._content is None or not content.url:
         return
+    
+    site_url = content.settings.get("SITEURL", "").rstrip("/")
+    full_url = f"{site_url}/{content.url.strip('/')}"
 
-    img = generate_qr_code(content.url, SvgImage)
+    img = generate_qr_code(full_url, SvgImage)
     qr_image_path = construct_output_path(content.settings, content.slug)
     save_qr_image(img, qr_image_path)
 
     relative_image_path = os.path.relpath(qr_image_path, content.settings["OUTPUT_PATH"])
-    site_url = content.settings.get("SITEURL", "").rstrip("/")
     qrcode_url = f'{site_url}/{relative_image_path}'
 
     content.engrave_qrcode = qrcode_url
