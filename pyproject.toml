@@ -1,11 +1,11 @@
 [project]
 name = "pelican-engrave"
 version = "0.0.1"
-description = " A plugin for generating and embedding QR codes in your blogpost "
-authors = [[{"name = "Lukas Muenter", email = "lukas.muenter@protonmail.com"}]]
+description = "A plugin for generating and embedding QR codes in your blogpost"
+authors = [{"name" = "Lukas Muenter", "email" = "lukas.muenter@protonmail.com"}]
 license = {text = "MIT"}
 readme = "README.md"
-keywords = [["pelican", "plugin", "qrcode", "qr", "blog", "url"]]
+keywords = ["pelican", "plugin", "qrcode", "qr", "blog", "url"]
 classifiers = [
     "Development Status :: 1 - Planning",
     "Environment :: Console",
