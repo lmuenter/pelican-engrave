@@ -3,15 +3,13 @@ import qrcode
 from qrcode.image.svg import SvgImage
 from pelican import signals
 
-
 IMAGE_DIR = "images"
 BASE_DIR = "engrave"
 
-
-def generate_qr_code(data, 
-                     image_factory, 
-                     box_size=10, 
-                     border=4, 
+def generate_qr_code(data,
+                     image_factory,
+                     box_size=10,
+                     border=4,
                      error_correction=qrcode.constants.ERROR_CORRECT_L):
     qr = qrcode.QRCode(
         error_correction=error_correction,
@@ -35,13 +33,17 @@ def save_qr_image(image, path):
 
 
 def append_qr_code_to_content(content, image_path):
-    content._content += f'<img src="{image_path}" alt="QR Code" type="image/svg+xml">'
+    relative_image_path = os.path.relpath(image_path, content.settings["OUTPUT_PATH"])
+    site_url = content.settings.get('SITEURL', '').rstrip('/')
+    full_image_url = f'{site_url}/{relative_image_path}'
+
+    content._content += f'<img src="{full_image_url}" alt="QR Code" type="image/svg+xml">'
 
 
 def get_qr_code(content):
     if content._content is None or not content.url:
         return
-    
+
     img = generate_qr_code(content.url, SvgImage)
     qr_image_path = construct_output_path(content.settings, content.slug)
     save_qr_image(img, qr_image_path)
@@ -50,4 +52,4 @@ def get_qr_code(content):
 
 
 def register():
-    signals.content_written.connect(get_qr_code)
+    signals.content_object_init.connect(get_qr_code)

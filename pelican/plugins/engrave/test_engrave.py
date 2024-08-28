@@ -43,16 +43,17 @@ def article(pelican_settings):
 
 def test_generate_qr_code(article):
 
-    # add qrcode to article
+    # add qrcode
     get_qr_code(article)
 
-    # get qrcode path
-    svg_path = os.path.join(article.settings["OUTPUT_PATH"], "images", "engrave", f"{article.slug}_qrcode.svg")
+    # get expected url
+    relative_path = os.path.join("images", "engrave", f"{article.slug}_qrcode.svg")
+    expected_url = f"http://example.com/{relative_path}"
 
-    # check presence and structure of embedded qrcode
-    assert svg_path in article.content
-    assert f'<img src="{svg_path}" alt="QR Code" type="image/svg+xml">' in article.content
+    # chech presence of html widget
+    assert f'<img src="{expected_url}" alt="QR Code" type="image/svg+xml">' in article.content
 
-    # check presence and structure of qrcode
+    # check presence/structure of qrcode
+    svg_path = os.path.join(article.settings["OUTPUT_PATH"], relative_path)
     assert os.path.exists(svg_path)
     assert os.path.getsize(svg_path) > 0
