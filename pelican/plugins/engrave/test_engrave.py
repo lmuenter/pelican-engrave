@@ -23,18 +23,20 @@ class MockCategory(Category):
 def pelican_settings(tmp_path):
     """Create Pelican settings using pytest's temporary path fixture."""
     settings = DEFAULT_CONFIG.copy()
-    settings.update({
-        "SITEURL": "http://example.com",
-        "OUTPUT_PATH": str(tmp_path / "output"),
-        "ARTICLE_URL": "{slug}.html",
-        "ARTICLE_SAVE_AS": "{slug}.html",
-        "PATH": str(tmp_path / "content"),
-        "PLUGINS": ["engrave"],
-        "FEED_ALL_ATOM": None,
-        "FEED_DOMAIN": "http://example.com",
-        "PAGINATED_TEMPLATES": {},
-        "DEFAULT_PAGINATION": False
-    })
+    settings.update(
+        {
+            "SITEURL": "http://example.com",
+            "OUTPUT_PATH": str(tmp_path / "output"),
+            "ARTICLE_URL": "{slug}.html",
+            "ARTICLE_SAVE_AS": "{slug}.html",
+            "PATH": str(tmp_path / "content"),
+            "PLUGINS": ["engrave"],
+            "FEED_ALL_ATOM": None,
+            "FEED_DOMAIN": "http://example.com",
+            "PAGINATED_TEMPLATES": {},
+            "DEFAULT_PAGINATION": False,
+        }
+    )
     return settings
 
 
@@ -45,7 +47,7 @@ def setup_dummy_qr_codes(output_path, num_dummy_files=5):
         os.makedirs(engrave_path)
     for i in range(num_dummy_files):
         dummy_file_path = os.path.join(engrave_path, f"dummy_{i}.svg")
-        with open(dummy_file_path, 'w') as f:
+        with open(dummy_file_path, "w") as f:
             f.write("Dummy QR code content")
 
 
@@ -58,36 +60,38 @@ def article(pelican_settings):
             "title": "Test Article",
             "slug": "test-article",
             "date": datetime(2024, 8, 28),
-            "category": category
+            "category": category,
         },
-        settings=pelican_settings
+        settings=pelican_settings,
     )
 
 
 @pytest.fixture
 def pelican_instance(pelican_settings, tmp_path):
-    setup_dummy_qr_codes(str(tmp_path / "output"))  # create initial dummy qrcodes for testing of removal
+    setup_dummy_qr_codes(
+        str(tmp_path / "output")
+    )  # create initial dummy qrcodes for testing of removal
     return Pelican(settings=pelican_settings)
 
 
 def decode_qr_code_from_svg(svg_path):
     try:
-        with open(svg_path, 'r') as svg_file:
+        with open(svg_path, "r") as svg_file:
             svg_content = svg_file.read()
-        
+
         png_output = cairosvg.svg2png(bytestring=svg_content, background_color="white")
         image = Image.open(io.BytesIO(png_output))
-        
+
         decoded_objects = pyzbar.decode(image, symbols=[ZBarSymbol.QRCODE])
         if decoded_objects:
-            return decoded_objects[0].data.decode('utf-8')
+            return decoded_objects[0].data.decode("utf-8")
         else:
             print("No QR code detected in the image.")
             return None
     except Exception as e:
         print(f"Error decoding QR code from SVG: {str(e)}")
         return None
-    
+
 
 def test_get_qr_code(article):
     get_qr_code(article)
@@ -100,8 +104,12 @@ def test_get_qr_code(article):
     expected_url = f"http://example.com/{relative_path}"
 
     # check presence of URL in article context
-    assert hasattr(article, "engrave_qrcode"), "Article should have engrave_qrcode attribute."
-    assert article.engrave_qrcode == expected_url, f"Expected URL to be {expected_url}, but got {article.engrave_qrcode}"
+    assert hasattr(
+        article, "engrave_qrcode"
+    ), "Article should have engrave_qrcode attribute."
+    assert (
+        article.engrave_qrcode == expected_url
+    ), f"Expected URL to be {expected_url}, but got {article.engrave_qrcode}"
 
     # check presence/structure of QR code
     svg_path = os.path.join(article.settings["OUTPUT_PATH"], relative_path)
@@ -110,9 +118,9 @@ def test_get_qr_code(article):
 
     # decode the QR code and check its content
     decoded_content = decode_qr_code_from_svg(svg_path)
-    assert decoded_content == full_article_url, (
-        f"QR code should encode the full article URL. Expected {full_article_url}, got {decoded_content}"
-    )
+    assert (
+        decoded_content == full_article_url
+    ), f"QR code should encode the full article URL. Expected {full_article_url}, got {decoded_content}"
 
 
 def test_qr_code_cleanup(pelican_instance, article):
@@ -121,9 +129,13 @@ def test_qr_code_cleanup(pelican_instance, article):
     pelican_instance.run()
 
     # verify cleanup
-    qr_code_dir = os.path.join(pelican_instance.settings["OUTPUT_PATH"], "images", "engrave")
+    qr_code_dir = os.path.join(
+        pelican_instance.settings["OUTPUT_PATH"], "images", "engrave"
+    )
     assert os.path.isdir(qr_code_dir), "QR code directory should exist"
 
-    qr_files = [f for f in os.listdir(qr_code_dir) if f.endswith('.svg')]
+    qr_files = [f for f in os.listdir(qr_code_dir) if f.endswith(".svg")]
     assert len(qr_files) == 1, "Only one QR code should exist after cleanup"
-    assert qr_files[0] == f"{article.slug}_qrcode.svg", "The existing QR code should match the article slug"
+    assert (
+        qr_files[0] == f"{article.slug}_qrcode.svg"
+    ), "The existing QR code should match the article slug"
