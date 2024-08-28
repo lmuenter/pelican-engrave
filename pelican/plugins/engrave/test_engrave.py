@@ -3,7 +3,7 @@ from pelican import Pelican
 from pelican.contents import Article, Category
 from pelican.settings import DEFAULT_CONFIG
 from datetime import datetime
-from engrave import get_qr_code
+from engrave import get_qr_code, register
 import os
 import tempfile
 
@@ -14,16 +14,33 @@ class MockCategory(Category):
 
 
 @pytest.fixture
-def pelican_settings():
+def pelican_settings(tmp_path):
+    """Create Pelican settings using pytest's temporary path fixture."""
     settings = DEFAULT_CONFIG.copy()
-    temp_output_path = tempfile.mkdtemp()
     settings.update({
         "SITEURL": "http://example.com",
-        "OUTPUT_PATH": temp_output_path,
+        "OUTPUT_PATH": str(tmp_path / "output"),
         "ARTICLE_URL": "{slug}.html",
-        "ARTICLE_SAVE_AS": "{slug}.html"
+        "ARTICLE_SAVE_AS": "{slug}.html",
+        "PATH": str(tmp_path / "content"),
+        "PLUGINS": ["engrave"],
+        "FEED_ALL_ATOM": None,
+        "FEED_DOMAIN": "http://example.com",
+        "PAGINATED_TEMPLATES": {},
+        "DEFAULT_PAGINATION": False
     })
     return settings
+
+
+def setup_dummy_qr_codes(output_path, num_dummy_files=5):
+    """Creates dummy QR code files to simulate old QR codes using os."""
+    engrave_path = os.path.join(output_path, "images", "engrave")
+    if not os.path.exists(engrave_path):
+        os.makedirs(engrave_path)
+    for i in range(num_dummy_files):
+        dummy_file_path = os.path.join(engrave_path, f"dummy_{i}.svg")
+        with open(dummy_file_path, 'w') as f:
+            f.write("Dummy QR code content")
 
 
 @pytest.fixture
@@ -41,9 +58,13 @@ def article(pelican_settings):
     )
 
 
-def test_get_qr_code(article):
+@pytest.fixture
+def pelican_instance(pelican_settings, tmp_path):
+    setup_dummy_qr_codes(str(tmp_path / "output"))  # create initial dummy qrcodes for testing of removal
+    return Pelican(settings=pelican_settings)
 
-    # add qrcode
+
+def test_get_qr_code(article):
     get_qr_code(article)
 
     # get expected url
@@ -61,3 +82,17 @@ def test_get_qr_code(article):
     with open(svg_path, 'r') as file:
         svg_content = file.read()
         assert '<svg' in svg_content and '</svg>' in svg_content, "QR code SVG file does not contain valid SVG content."
+
+
+def test_qr_code_cleanup(pelican_instance, article):
+    """tests qr cleanup prior to run"""
+    register()
+    pelican_instance.run()
+
+    # verify cleanup
+    qr_code_dir = os.path.join(pelican_instance.settings["OUTPUT_PATH"], "images", "engrave")
+    assert os.path.isdir(qr_code_dir), "QR code directory should exist"
+
+    qr_files = [f for f in os.listdir(qr_code_dir) if f.endswith('.svg')]
+    assert len(qr_files) == 1, "Only one QR code should exist after cleanup"
+    assert qr_files[0] == f"{article.slug}_qrcode.svg", "The existing QR code should match the article slug"

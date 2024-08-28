@@ -2,9 +2,12 @@ import os
 import qrcode
 from qrcode.image.svg import SvgImage
 from pelican import signals
+import shutil
+
 
 IMAGE_DIR = "images"
 BASE_DIR = "engrave"
+
 
 def generate_qr_code(data,
                      image_factory,
@@ -28,6 +31,15 @@ def construct_output_path(settings, slug):
     return os.path.join(output_dir, f"{slug}_qrcode.svg")
 
 
+def cleanup_engrave_directory(pelican):
+    """Clears engrave directory at build start"""
+    engrave_path = os.path.join(pelican.settings["OUTPUT_PATH"], "images", "engrave")
+    if os.path.exists(engrave_path):
+        shutil.rmtree(engrave_path)
+        os.makedirs(engrave_path)
+        print(f"Cleaned up {engrave_path}")
+
+
 def save_qr_image(image, path):
     image.save(path)
 
@@ -49,11 +61,12 @@ def get_qr_code(content):
     save_qr_image(img, qr_image_path)
 
     relative_image_path = os.path.relpath(qr_image_path, content.settings["OUTPUT_PATH"])
-    site_url = content.settings.get('SITEURL', '').rstrip('/')
+    site_url = content.settings.get("SITEURL", "").rstrip("/")
     qrcode_url = f'{site_url}/{relative_image_path}'
 
     content.engrave_qrcode = qrcode_url
 
 
 def register():
+    signals.initialized.connect(cleanup_engrave_directory)
     signals.content_object_init.connect(get_qr_code)
