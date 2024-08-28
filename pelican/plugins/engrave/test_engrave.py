@@ -85,7 +85,7 @@ def decode_qr_code_from_svg(svg_path):
         decoded_objects = pyzbar.decode(image, symbols=[ZBarSymbol.QRCODE])
         if decoded_objects:
             return decoded_objects[0].data.decode("utf-8")
-    except Exception as e:
+    except Exception:
         return None
 
 
