@@ -124,7 +124,7 @@ def test_cleanup_directory_on_init(engrave_plugin, pelican_settings, tmp_path):
 
     # run cleanup
     pelican = Mock(settings=pelican_settings)
-    engrave_plugin.engraver.cleanup_directory(pelican)
+    engrave_plugin.engraver._cleanup_directory(pelican)
 
     assert not os.path.exists(
         previous_run_path
