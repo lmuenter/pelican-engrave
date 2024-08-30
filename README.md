@@ -5,7 +5,7 @@
 [![Downloads](https://img.shields.io/pypi/dm/pelican-engrave)](https://pypi.org/project/pelican-engrave/)
 ![License](https://img.shields.io/pypi/l/pelican-engrave?color=blue)
 
-**Engrave** is a Pelican plugin that generates QR codes for the URLs of your blog posts and pages, providing quick access to your content on mobile devices by scanning the code.
+**Engrave** is a generates QR codes for the URLs of your Pelican posts and pages.
 
 ## Installation
 
@@ -35,11 +35,11 @@ Before generating new QR codes, Engrave clears the `engrave/` directory to ensur
 
 ### Schema Validation
 
-Engrave validates URL schemas to ensure security. By default, it only allows URLs with the `https` schema. If your site uses another schema (e.g., `http` or `ftp`), you need to explicitly add it to the allowed schemas in your Pelican settings.
+Engrave validates URL schemas to ensure security. By default, it only allows URLs with the `https` schema. If your site uses another schema (e.g., `http` or even `ftp`), you should add it to the allowed schemas in your Pelican settings.
 
 ### Setting Allowed Schemas
 
-To specify which URL schemas are allowed for QR code generation, use the `ENGRAVE_ALLOWED_SCHEMES` setting in your Pelican configuration file (`pelicanconf.py`). For example:
+To specify allowed URL schemas for QR code generation, use the `ENGRAVE_ALLOWED_SCHEMES` setting in your Pelican configuration file (`pelicanconf.py`). For example:
 
 ```python
 ENGRAVE_ALLOWED_SCHEMES = ["https", "http"]
@@ -72,7 +72,6 @@ source venv/bin/activate
 ```
 python -m pip install -r requirements.txt
 ```
-
 
 ## License
 
