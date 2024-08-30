@@ -28,4 +28,3 @@ class QRCodeEngraver(Engraver):
         qr.add_data(data)
         qr.make(fit=True)
         return qr.make_image(fill_color="black", back_color="white")
-
