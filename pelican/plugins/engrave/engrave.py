@@ -10,6 +10,12 @@ logger = logging.getLogger(__name__)
 ENGRAVE_DIR = "engrave"
 
 
+def get_settings(settings):
+    """Retrieve settings, default to ["https"] for allowed schemes."""
+    default_schemes = ["https"]
+    return settings.get("ENGRAVE_ALLOWED_SCHEMES", default_schemes)
+
+
 def cleanup_engrave_directory(pelican):
     """Clear engrave directory before building."""
     if not pelican.settings.get("SITEURL"):
@@ -42,8 +48,17 @@ def process_content(content):
         )
         return
 
+    # check schemes
+    allowed_schemes = get_settings(content.settings)
+    if not any(site_url.startswith(scheme + "://") for scheme in allowed_schemes):
+        logger.error(
+            f"URL scheme not allowed. Skipping QR code generation for URL: {site_url}"
+        )
+        return
+
+    # generate and save QR Code
     full_url = f"{site_url.rstrip('/')}/{content.url.strip('/')}"
-    qr_engraver = QRCodeEngraver()
+    qr_engraver = QRCodeEngraver(allowed_schemes=allowed_schemes)
     qr_image = qr_engraver.engrave(full_url)
 
     if qr_image:
