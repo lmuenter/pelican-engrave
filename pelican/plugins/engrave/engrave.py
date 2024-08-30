@@ -2,29 +2,47 @@ import logging
 import os
 import shutil
 
-from .engraver import QRCodeEngraver
-
 from pelican import signals
+
+from .engraver import QRCodeEngraver
 
 logger = logging.getLogger(__name__)
 
-IMAGE_DIR = "images"
-BASE_DIR = "engrave"
+
+ENGRAVE_DIR = "engrave"
+
+
+def add_static_path(pelican):
+    if not ENGRAVE_DIR in pelican.settings["STATIC_PATHS"]:
+        pelican.settings['STATIC_PATHS'].append(ENGRAVE_DIR)
+
 
 def cleanup_engrave_directory(pelican):
     """Clears engrave directory at build start"""
-    engrave_path = os.path.join(pelican.settings["OUTPUT_PATH"], "images", "engrave")
+    if not pelican.settings["SITEURL"]:
+        logger.warning("SITEURL is not set. QR code generation is aborted.")
+        return
+
+    add_static_path(pelican)
+    engrave_path = os.path.join(pelican.settings["OUTPUT_PATH"], ENGRAVE_DIR)
     if os.path.exists(engrave_path):
         shutil.rmtree(engrave_path)
         os.makedirs(engrave_path)
         logger.info(f"Cleaned up {engrave_path}")
 
+
 def construct_output_path(settings, slug):
-    output_dir = os.path.join(settings["OUTPUT_PATH"], IMAGE_DIR, BASE_DIR)
+    output_dir = os.path.join(settings["OUTPUT_PATH"], ENGRAVE_DIR)
     os.makedirs(output_dir, exist_ok=True)
     return os.path.join(output_dir, f"{slug}_qrcode.svg")
 
+
 def process_content(content):
+    site_url = content.settings.get("SITEURL")
+    if not site_url:
+        logger.warning("SITEURL is not set. Skipping QR code generation for all content.")
+        return
+    
     if content._content is None or not content.url:
         return
 
