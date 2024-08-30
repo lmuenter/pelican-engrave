@@ -9,6 +9,7 @@ from pelican.settings import read_settings
 
 N_PREVIOUS_QRCODES = 5
 
+
 @pytest.fixture
 def temp_path():
     """Create temp path for tests."""
