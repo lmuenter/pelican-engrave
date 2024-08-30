@@ -1,5 +1,3 @@
-import pytest
-
 from engrave.engraver.template import Engraver
 
 

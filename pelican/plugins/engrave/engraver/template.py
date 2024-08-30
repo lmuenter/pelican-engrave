@@ -24,14 +24,9 @@ class Engraver:
         """Validate the URL's scheme and structure."""
         try:
             result = urlparse(url)
-            # Ensure the scheme, netloc, and path are valid as per the requirements.
-            is_valid = result.scheme in self.allowed_schemes and result.netloc
+            # ensure scheme, netloc, and path are valid.
+            return result.scheme in self.allowed_schemes and result.netloc
 
-            if is_valid:
-                return is_valid
-            else:
-                logger.info(f"Could not generate QR Code for {url}. Not a URL with expected structure.")
-                return False
         except Exception as e:
             logger.error(f"Invalid URL: {url}, Error: {e}")
             return False

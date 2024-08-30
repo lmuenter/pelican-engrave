@@ -1,12 +1,11 @@
-import os
 import io
+import os
 
 import cairosvg
 from PIL import Image
 import pytest
 from pyzbar import pyzbar
 from pyzbar.pyzbar import ZBarSymbol
-import qrcode
 from qrcode.image.svg import SvgImage
 
 from ...engraver.qrcode import QRCodeEngraver
@@ -14,11 +13,12 @@ from ...engraver.qrcode import QRCodeEngraver
 
 @pytest.fixture
 def qr_engraver():
-    """Instantiate Engraver with the correct setup."""
+    """Instantiate Engraver."""
     return QRCodeEngraver()
 
+
 def decode_qr_code_from_svg(svg_path):
-    """Extract string from QRCode using cairosvg and pyzbar."""
+    """Extract data from QRCode using cairosvg and pyzbar."""
     with open(svg_path) as svg_file:
         svg_content = svg_file.read()
 
@@ -30,7 +30,7 @@ def decode_qr_code_from_svg(svg_path):
 
 
 def test_qr_code_generation_and_content(tmp_path, qr_engraver):
-    """Check overall functioning and correctness of output."""
+    """Check functioning and correctness of output."""
     qr_image = qr_engraver.engrave("https://example.com")
     assert qr_image, "QR code generation should return an image"
 
@@ -42,11 +42,17 @@ def test_qr_code_generation_and_content(tmp_path, qr_engraver):
 
     # Decode and check
     decoded_data = decode_qr_code_from_svg(svg_path)
-    assert decoded_data == "https://example.com", f"Expected 'https://example.com', got {decoded_data}"
+    assert (
+        decoded_data == "https://example.com"
+    ), f"Expected 'https://example.com', got {decoded_data}"
+
 
 def test_invalid_url_handling(qr_engraver):
     """Ensure no QR code is generated for invalid URLs."""
-    assert qr_engraver.engrave("http://not-allowed.com") is None, "Shouldn't generate QR code for invalid URL"
+    assert (
+        qr_engraver.engrave("http://not-allowed.com") is None
+    ), "Shouldn't generate QR code for invalid URL"
+
 
 def test_output_svg_format(qr_engraver):
     """Check return type."""
