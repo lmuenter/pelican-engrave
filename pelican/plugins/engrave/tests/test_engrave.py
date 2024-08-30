@@ -7,23 +7,13 @@ from pathlib import Path
 
 
 @pytest.fixture
-def pelican_environment():
+def temp_path():
     with TemporaryDirectory() as tempdir:
-        cwd = os.path.dirname(os.path.abspath(__file__))
-        temp_path = os.path.abspath(tempdir)
-        settings = read_settings(override={
-            'SITEURL': "https://example.com",
-            'PATH': temp_path,
-            'OUTPUT_PATH': os.path.join(temp_path, 'output'),
-            'PLUGIN_PATHS': ['../../'],
-            'PLUGINS': ['engrave'],
-        })
-        pelican = Pelican(settings=settings)
-        yield pelican, temp_path
+        yield os.path.abspath(tempdir)
+
 
 @pytest.fixture
-def create_article(pelican_environment):
-    pelican, temp_path = pelican_environment
+def create_article(temp_path):
     content_dir = Path(temp_path) / 'content'
     content_dir.mkdir(parents=True, exist_ok=True)
 
@@ -42,32 +32,40 @@ This is a test article content in reStructuredText format.
 
 
 @pytest.fixture
-def create_previous_qrcodes(pelican_environment, num_dummy_files=5):
-    _, temp_path = pelican_environment
+def create_previous_qrcodes(temp_path, num_dummy_files=5):
     engrave_path = Path(temp_path) / 'output' / 'images' / 'engrave'
-    if not os.path.exists(engrave_path):
-        os.makedirs(engrave_path)
+    engrave_path.mkdir(parents=True, exist_ok=True)
     for i in range(num_dummy_files):
         dummy_file_path = engrave_path / f"dummy_{i}.svg"
-        with open(dummy_file_path, "w") as f:
-            f.write("Dummy QR code content")
+        dummy_file_path.write_text("Dummy QR code content")
 
 
-def test_plugin_functionality(create_previous_qrcodes, create_article, pelican_environment):
-    pelican, temp_path = pelican_environment
+def test_plugin_functionality(create_previous_qrcodes, create_article, temp_path):
     engrave_output_path = Path(temp_path) / 'output' / 'images' / 'engrave'
-    article_path = create_article
+    svg_files = list(engrave_output_path.glob('*.svg'))
+    print(svg_files)
+    assert len(svg_files) == 5, "Engrave dir should contain 5 files of a simulated previous run"
 
+    settings = read_settings(override={
+        'SITEURL': "https://example.com",
+        'PATH': temp_path,
+        'OUTPUT_PATH': os.path.join(temp_path, 'output'),
+        'PLUGIN_PATHS': ['../../'],
+        'PLUGINS': ['engrave'],
+    })
+    pelican = Pelican(settings=settings)
     pelican.run()
 
-    # check dir structure
+    engrave_output_path = Path(temp_path) / 'output' / 'images' / 'engrave'
+
+    # Check dir structure
     assert engrave_output_path.exists(), "Output directory was not created."
 
-    # list all svg files
+    # List all SVG files
     svg_files = list(engrave_output_path.glob('*.svg'))
-    assert len(svg_files) > 0, "Engrave dir should not be empty."
+    assert len(svg_files) == 1, "Engrave dir should have been cleaned prior to execution."
 
-    # check qrcode correctness
+    # Check QR code correctness
     article_name = "test-article"
     svg_with_article_name = any(article_name in file.name for file in svg_files)
     assert svg_with_article_name, f"No SVG file found for article name {article_name}."
