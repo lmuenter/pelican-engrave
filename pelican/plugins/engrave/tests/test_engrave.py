@@ -48,17 +48,21 @@ def create_previous_qrcodes(temp_path, num_dummy_files=5):
 def test_plugin_functionality(create_previous_qrcodes, create_article, temp_path):
     """Test basic plugin functionality: directory cleanup and QRCOde generation."""
     engrave_output_path = Path(temp_path) / "output" / "engrave"
-    svg_files = list(engrave_output_path.glob('*.svg'))
+    svg_files = list(engrave_output_path.glob("*.svg"))
     print(svg_files)
-    assert len(svg_files)==5, "Engrave dir should contain 5 files of a simulated previous run."
+    assert (
+        len(svg_files) == 5
+    ), "Engrave dir should contain 5 files of a simulated previous run."
 
-    settings = read_settings(override={
-        "SITEURL": "https://example.com",
-        "PATH": temp_path,
-        "OUTPUT_PATH": os.path.join(temp_path, "output"),
-        "PLUGIN_PATHS": ["../../"],
-        "PLUGINS": ["engrave"],
-    })
+    settings = read_settings(
+        override={
+            "SITEURL": "https://example.com",
+            "PATH": temp_path,
+            "OUTPUT_PATH": os.path.join(temp_path, "output"),
+            "PLUGIN_PATHS": ["../../"],
+            "PLUGINS": ["engrave"],
+        }
+    )
     pelican = Pelican(settings=settings)
     pelican.run()
 
@@ -66,8 +70,10 @@ def test_plugin_functionality(create_previous_qrcodes, create_article, temp_path
 
     # check dir structure
     assert engrave_output_path.exists(), "Output directory was not created."
-    svg_files = list(engrave_output_path.glob('*.svg'))
-    assert len(svg_files) == 1, "Engrave dir should have been cleaned prior to execution."
+    svg_files = list(engrave_output_path.glob("*.svg"))
+    assert (
+        len(svg_files) == 1
+    ), "Engrave dir should have been cleaned prior to execution."
 
     # check QR code
     article_name = "test-article"
@@ -77,22 +83,28 @@ def test_plugin_functionality(create_previous_qrcodes, create_article, temp_path
 
 def test_no_siteurl(create_article, temp_path, caplog):
     """Test behaviour with missing siteurl."""
-    settings = read_settings(override={
-        "PATH": temp_path,
-        "OUTPUT_PATH": os.path.join(temp_path, "output"),
-        "PLUGIN_PATHS": ["../../"],
-        "PLUGINS": ["engrave"],
-    })
+    settings = read_settings(
+        override={
+            "PATH": temp_path,
+            "OUTPUT_PATH": os.path.join(temp_path, "output"),
+            "PLUGIN_PATHS": ["../../"],
+            "PLUGINS": ["engrave"],
+        }
+    )
     pelican = Pelican(settings=settings)
     pelican.run()
 
     # check siteurl warning
-    assert "SITEURL is not set" in caplog.text, "Warning over missing SITEURL should've been logged."
+    assert (
+        "SITEURL is not set" in caplog.text
+    ), "Warning over missing SITEURL should've been logged."
 
     # check that no directory/files were created
-    engrave_output_path = Path(temp_path) / 'output' / 'engrave'
-    assert not engrave_output_path.exists(), "Engrave directory should'nt have been created."
+    engrave_output_path = Path(temp_path) / "output" / "engrave"
+    assert (
+        not engrave_output_path.exists()
+    ), "Engrave directory should'nt have been created."
 
     if engrave_output_path.exists():
-        svg_files = list(engrave_output_path.glob('*.svg'))
+        svg_files = list(engrave_output_path.glob("*.svg"))
         assert len(svg_files) == 0, "No QR Code should have been generated."
