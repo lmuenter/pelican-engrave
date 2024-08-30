@@ -1,11 +1,11 @@
-# Engrave: A Plugin for Pelican
+# Engrave: QR Codes for Pages and Articles
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/pelican-plugins/engrave/main.yml?branch=main)](https://github.com/lmuenter/pelican-engrave/actions)
 [![PyPI Version](https://img.shields.io/pypi/v/pelican-engrave)](https://pypi.org/project/pelican-engrave/)
 [![Downloads](https://img.shields.io/pypi/dm/pelican-engrave)](https://pypi.org/project/pelican-engrave/)
 ![License](https://img.shields.io/pypi/l/pelican-engrave?color=blue)
 
-**Engrave** is a Pelican plugin that generates QR codes for your blog posts and pages, providing quick access to your content on mobile devices by scanning the code.
+**Engrave** is a generates QR codes for the URLs of your Pelican posts and pages.
 
 ## Installation
 
@@ -35,11 +35,11 @@ Before generating new QR codes, Engrave clears the `engrave/` directory to ensur
 
 ### Schema Validation
 
-Engrave validates URL schemas to ensure security. By default, it only allows URLs with the `https` schema. If your site uses another schema (e.g., `http` or `ftp`), you need to explicitly add it to the allowed schemas in your Pelican settings.
+Engrave validates URL schemas to ensure security. By default, it only allows URLs with the `https` schema. If your site uses another schema (e.g., `http` or even `ftp`), you should add it to the allowed schemas in your Pelican settings.
 
 ### Setting Allowed Schemas
 
-To specify which URL schemas are allowed for QR code generation, use the `ENGRAVE_ALLOWED_SCHEMES` setting in your Pelican configuration file (`pelicanconf.py`). For example:
+To specify allowed URL schemas for QR code generation, use the `ENGRAVE_ALLOWED_SCHEMES` setting in your Pelican configuration file (`pelicanconf.py`). For example:
 
 ```python
 ENGRAVE_ALLOWED_SCHEMES = ["https", "http"]
@@ -57,6 +57,21 @@ To start contributing to this plugin, review the [Contributing to Pelican][] doc
 
 [existing issues]: https://github.com/lmuenter/pelican-engrave/issues
 [Contributing to Pelican]: https://docs.getpelican.com/en/latest/contribute.html
+
+### Development
+
+To set up a development environment for Engrave, follow these steps.
+
+1. Create and activate the venv:
+```
+python -m venv venv
+source venv/bin/activate
+```
+
+2. Install dependencies
+```
+python -m pip install -r requirements.txt
+```
 
 ## License
 
