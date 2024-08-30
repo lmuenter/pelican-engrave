@@ -1,5 +1,4 @@
 import io
-import os
 
 import cairosvg
 from PIL import Image
