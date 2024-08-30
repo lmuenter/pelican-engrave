@@ -10,19 +10,11 @@ logger = logging.getLogger(__name__)
 ENGRAVE_DIR = "engrave"
 
 
-def add_static_path(pelican):
-    """Add engrave dir to static paths."""
-    if ENGRAVE_DIR not in pelican.settings["STATIC_PATHS"]:
-        pelican.settings["STATIC_PATHS"].append(ENGRAVE_DIR)
-
-
 def cleanup_engrave_directory(pelican):
     """Clear engrave directory before building."""
     if not pelican.settings.get("SITEURL"):
         logger.warning("SITEURL is not set. QR code generation is aborted.")
         return
-
-    add_static_path(pelican)
 
     # clean directory tree for previous contents of engrave dir
     engrave_path = os.path.join(pelican.settings["OUTPUT_PATH"], ENGRAVE_DIR)
