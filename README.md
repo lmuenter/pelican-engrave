@@ -55,7 +55,7 @@ Contributions are welcome and much appreciated. Every little bit helps. You can 
 
 To start contributing to this plugin, review the [Contributing to Pelican][] documentation, beginning with the **Contributing Code** section.
 
-[existing issues]: https://github.com/lmuenter/lm-pelican-engrave/issues
+[existing issues]: https://github.com/lmuenter/pelican-engrave/issues
 [Contributing to Pelican]: https://docs.getpelican.com/en/latest/contribute.html
 
 ### Development
