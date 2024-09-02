@@ -1,6 +1,6 @@
 [project]
 name = "lm-pelican-engrave"
-version = "0.0.1"
+version = "0.0.2"
 description = "A plugin for generating and embedding QR codes in your blogpost"
 authors = [{"name" = "Lukas Muenter", "email" = "lukas.muenter@protonmail.com"}]
 license = {text = "MIT"}
