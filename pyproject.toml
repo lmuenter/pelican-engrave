@@ -1,5 +1,5 @@
 [project]
-name = "pelican-engrave"
+name = "lm-pelican-engrave"
 version = "0.0.1"
 description = "A plugin for generating and embedding QR codes in your blogpost"
 authors = [{"name" = "Lukas Muenter", "email" = "lukas.muenter@protonmail.com"}]
@@ -58,7 +58,7 @@ source-includes = [
     "CHANGELOG.md",
     "CONTRIBUTING.md",
 ]
-includes = ["pelican/"]
+includes = ["pelican/plugins/lm_pelican_engrave"]
 excludes = ["**/.DS_Store", "**/test_data/**", "tasks.py"]
 
 [tool.autopub]
