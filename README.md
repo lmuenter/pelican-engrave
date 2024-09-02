@@ -1,9 +1,9 @@
 # Engrave: QR Codes for Pages and Articles
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/pelican-plugins/engrave/main.yml?branch=main)](https://github.com/lmuenter/pelican-engrave/actions)
-[![PyPI Version](https://img.shields.io/pypi/v/pelican-engrave)](https://pypi.org/project/pelican-engrave/)
-[![Downloads](https://img.shields.io/pypi/dm/pelican-engrave)](https://pypi.org/project/pelican-engrave/)
-![License](https://img.shields.io/pypi/l/pelican-engrave?color=blue)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/lmuenter/pelican-engrave/main.yml?branch=main)](https://github.com/lmuenter/pelican-engrave/actions)
+[![PyPI Version](https://img.shields.io/pypi/v/lm-pelican-engrave)](https://pypi.org/project/lm-pelican-engrave/)
+[![Downloads](https://img.shields.io/pypi/dm/lm-pelican-engrave)](https://pypi.org/project/lm-pelican-engrave/)
+![License](https://img.shields.io/pypi/l/lm-pelican-engrave?color=blue)
 
 **Engrave** is a generates QR codes for the URLs of your Pelican posts and pages.
 
