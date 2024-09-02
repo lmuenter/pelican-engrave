@@ -61,7 +61,7 @@ def test_plugin_functionality(create_previous_qrcodes, create_article, temp_path
             "PATH": temp_path,
             "OUTPUT_PATH": os.path.join(temp_path, "output"),
             "PLUGIN_PATHS": ["../../"],
-            "PLUGINS": ["engrave"],
+            "PLUGINS": ["lm_pelican_engrave"],
         }
     )
     pelican = Pelican(settings=settings)
@@ -89,7 +89,7 @@ def test_no_siteurl(create_article, temp_path, caplog):
             "PATH": temp_path,
             "OUTPUT_PATH": os.path.join(temp_path, "output"),
             "PLUGIN_PATHS": ["../../"],
-            "PLUGINS": ["engrave"],
+            "PLUGINS": ["lm_pelican_engrave"],
         }
     )
     pelican = Pelican(settings=settings)
@@ -119,7 +119,7 @@ def test_wrong_scheme(create_article, temp_path, caplog):
             "PATH": temp_path,
             "OUTPUT_PATH": os.path.join(temp_path, "output"),
             "PLUGIN_PATHS": ["../../"],
-            "PLUGINS": ["engrave"],
+            "PLUGINS": ["lm_pelican_engrave"],
             "ENGRAVE_ALLOWED_SCHEMES": ["https"],
         }
     )
@@ -139,7 +139,7 @@ def test_alternative_scheme(temp_path, create_article, caplog):
             "PATH": temp_path,
             "OUTPUT_PATH": os.path.join(temp_path, "output"),
             "PLUGIN_PATHS": ["../../"],
-            "PLUGINS": ["engrave"],
+            "PLUGINS": ["lm_pelican_engrave"],
             "ENGRAVE_ALLOWED_SCHEMES": ["http", "https"],
         }
     )

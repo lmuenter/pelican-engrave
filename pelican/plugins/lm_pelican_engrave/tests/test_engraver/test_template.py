@@ -1,4 +1,4 @@
-from engrave.engraver.template import Engraver
+from lm_pelican_engrave.engraver.template import Engraver
 
 
 def test_url_validation():
