@@ -12,7 +12,7 @@
 This plugin can be installed via:
 
 ```bash
-python -m pip install pelican-engrave
+pip install lm-pelican-engrave
 ```
 
 As long as you have not explicitly added a `PLUGINS` setting to your Pelican settings file, then the newly-installed plugin should be automatically detected and enabled. Otherwise, you must add `engrave` to your existing `PLUGINS` list. For more information, please see the [How to Use Plugins](https://docs.getpelican.com/en/latest/plugins.html#how-to-use-plugins) documentation.
